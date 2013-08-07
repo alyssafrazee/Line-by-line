@@ -1,0 +1,6 @@
+[
+    {
+        "caption": "LBL: Choose Application",
+        "command": "app_switcher"
+    }
+]

@@ -1,0 +1,11 @@
+{
+    "osx" : {
+        // Terminal or iTerm
+        // Default is Terminal. 
+        "App" : "Terminal"
+    },
+
+    // not sure if this is used...
+    // but here it is
+    "extensions": ["r", "R", "S", "s", "Rprofile", "py", "sh"]
+}

@@ -1,3 +1,14 @@
 [
-  { "keys": ["super+enter"], "command": "send_select"}
+  { "keys": ["super+enter"], "command": "send_select"},
+  { "keys": ["super+d"], "command": "r_docs", "context":
+      [
+        { "key": "selection_empty", "operator": "equal", "operand": false, "match_all": true },
+        {
+        "operand": "source.r",
+        "operator": "equal",
+        "match_all": true,
+        "key": "selector"
+        }
+      ]
+    }
 ]

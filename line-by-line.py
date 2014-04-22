@@ -107,15 +107,39 @@ class SendSelectCommand(sublime_plugin.TextCommand):
 class RDocsCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         sel = self.view.sel()[0]
-
-        params_reg = self.view.find('(?<=\().*(?=\))', sel.begin())
+        # Taking out spaces and such
+        params_reg = self.view.find('(?<=\().*(?=\)|$)', sel.begin())
+        # self.view.insert(edit, sel.begin(), params_reg)
         params_txt = self.view.substr(params_reg)
-        params = params_txt.split(',')
+        params_txt=re.sub("^\s+","",params_txt)
+        params_txt=re.sub("\s+\Z","",params_txt)
+        params_txt=re.sub(',\s+', ",", params_txt)
+        params_txt=re.sub('\s+=', "=", params_txt)
+        params_txt=re.sub('=\s+', "=", params_txt)
+        params_txt=re.sub('"', "", params_txt)
+        params_txt=re.sub(',$', "", params_txt)
 
+        #### adding trailing , so they are the same
+        params_txt = params_txt + ","
+
+        ### take out anything like ifelse() or c()
+        params_txt=re.sub('=[^=]+?\(\S+?\),', ",", params_txt)
+        params_txt=re.sub('=[^=]+?\{\S+?\},', ",", params_txt)
+        params_txt=re.sub(',$', "", params_txt)
+
+
+
+        # Splitting on commas
+        params = params_txt.split(',')
         snippet = "#'<brief desc>\n#'\n#'<full description>\n"
 
         for p in params:
-            snippet += "#' @param %s <what param does>\n" % p
+            # self.view.insert(edit, sel.begin(), p + "\n")
+
+            # Added if statement if not empty
+            if p != '':
+                p = re.sub('(.*)=(.*)', "\\1", p)
+                snippet += "#' @param %s <what param does>\n" % p
 
         snippet += "#' @export\n#' @keywords\n#' @seealso\n#' @return\n#' @alias\n#' @examples \dontrun{\n#'\n#'}\n"
 

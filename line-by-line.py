@@ -118,6 +118,8 @@ class RDocsCommand(sublime_plugin.TextCommand):
         params_txt=re.sub('=\s+', "=", params_txt)
         params_txt=re.sub('"', "", params_txt)
         params_txt=re.sub(',$', "", params_txt)
+        params_txt=re.sub('{$', "", params_txt)
+        params_txt=re.sub('\)$', "", params_txt)
 
         #### adding trailing , so they are the same
         params_txt = params_txt + ","

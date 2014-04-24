@@ -133,7 +133,7 @@ class RDocsCommand(sublime_plugin.TextCommand):
 
         # Splitting on commas
         params = params_txt.split(',')
-        snippet = "#'<brief desc>\n#'\n#'<full description>\n"
+        snippet = "#' @title <brief desc>\n#'\n#' @description <full description>\n"
 
         for p in params:
             # self.view.insert(edit, sel.begin(), p + "\n")

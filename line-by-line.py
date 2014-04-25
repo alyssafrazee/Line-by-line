@@ -90,7 +90,7 @@ class SendSelectCommand(sublime_plugin.TextCommand):
             cmd += thiscmd +'\n'
         runcmd(cmd)
 
-    ### (AF) function below is snagged from Rtools.py
+    ### (Aaron F) function below is snagged from Rtools.py
     def advanceCursor(self, region):
         (row, col) = self.view.rowcol(region.begin())
 
@@ -104,7 +104,7 @@ class SendSelectCommand(sublime_plugin.TextCommand):
         # Remove the old region and add the new one
         self.view.sel().subtract(region)
         self.view.sel().add(sublime.Region(loc, loc))
-    ### (AF) End of snag         
+    ### (Aaron F) End of snag         
 
 class RDocsCommand(sublime_plugin.TextCommand):
     def run(self, edit):

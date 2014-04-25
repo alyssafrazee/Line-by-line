@@ -75,7 +75,9 @@ class SendSelectCommand(sublime_plugin.TextCommand):
                     esel = self.expand_sel(sel)
                     if esel:
                         thiscmd = self.view.substr(esel)
-                self.advanceCursor(sel) ### (AF) Snagged from Rtools.py I think this is approximate the same place that Rtools.py uses the advanceCursor function. In that file they loop over "region" instead of "sel".                        
+                settings = sublime.load_settings(settingsfile)
+                if settings.get('advance_cursor'):
+                    self.advanceCursor(sel) ### (Aaron F) Snagged from Rtools.py I think this is approximate the same place that Rtools.py uses the advanceCursor function. In that file they loop over "region" instead of "sel".                        
                         
             else:
                 thiscmd = self.view.substr(sel)

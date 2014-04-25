@@ -75,6 +75,8 @@ class SendSelectCommand(sublime_plugin.TextCommand):
                     esel = self.expand_sel(sel)
                     if esel:
                         thiscmd = self.view.substr(esel)
+                self.advanceCursor(sel) ### (AF) Snagged from Rtools.py I think this is approximate the same place that Rtools.py uses the advanceCursor function. In that file they loop over "region" instead of "sel".                        
+                        
             else:
                 thiscmd = self.view.substr(sel)
                 # if selection is function meta definition (R), expand to {...}
@@ -86,18 +88,60 @@ class SendSelectCommand(sublime_plugin.TextCommand):
             cmd += thiscmd +'\n'
         runcmd(cmd)
 
+    ### (AF) function below is snagged from Rtools.py
+    def advanceCursor(self, region):
+        (row, col) = self.view.rowcol(region.begin())
+
+        # Make sure not to go past end of next line
+        nextline = self.view.line(self.view.text_point(row + 1, 0))
+        if nextline.size() < col:
+            loc = self.view.text_point(row + 1, nextline.size())
+        else:
+            loc = self.view.text_point(row + 1, col)
+
+        # Remove the old region and add the new one
+        self.view.sel().subtract(region)
+        self.view.sel().add(sublime.Region(loc, loc))
+    ### (AF) End of snag         
+
 class RDocsCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         sel = self.view.sel()[0]
-
-        params_reg = self.view.find('(?<=\().*(?=\))', sel.begin())
+        # Taking out spaces and such
+        params_reg = self.view.find('(?<=\().*(?=\)|$)', sel.begin())
+        # self.view.insert(edit, sel.begin(), params_reg)
         params_txt = self.view.substr(params_reg)
-        params = params_txt.split(',')
+        params_txt=re.sub("^\s+","",params_txt)
+        params_txt=re.sub("\s+\Z","",params_txt)
+        params_txt=re.sub(',\s+', ",", params_txt)
+        params_txt=re.sub('\s+=', "=", params_txt)
+        params_txt=re.sub('=\s+', "=", params_txt)
+        params_txt=re.sub('"', "", params_txt)
+        params_txt=re.sub(',$', "", params_txt)
+        params_txt=re.sub('{$', "", params_txt)
+        params_txt=re.sub('\)$', "", params_txt)
 
-        snippet = "#'<brief desc>\n#'\n#'<full description>\n"
+        #### adding trailing , so they are the same
+        params_txt = params_txt + ","
+
+        ### take out anything like ifelse() or c()
+        params_txt=re.sub('=[^=]+?\(\S+?\),', ",", params_txt)
+        params_txt=re.sub('=[^=]+?\{\S+?\},', ",", params_txt)
+        params_txt=re.sub(',$', "", params_txt)
+
+
+
+        # Splitting on commas
+        params = params_txt.split(',')
+        snippet = "#' @title <brief desc>\n#'\n#' @description <full description>\n"
 
         for p in params:
-            snippet += "#' @param %s <what param does>\n" % p
+            # self.view.insert(edit, sel.begin(), p + "\n")
+
+            # Added if statement if not empty
+            if p != '':
+                p = re.sub('(.*)=(.*)', "\\1", p)
+                snippet += "#' @param %s <what param does>\n" % p
 
         snippet += "#' @export\n#' @keywords\n#' @seealso\n#' @return\n#' @alias\n#' @examples \dontrun{\n#'\n#'}\n"
 

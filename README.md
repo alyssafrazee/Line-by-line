@@ -14,3 +14,5 @@ Line-by-line is a Sublime Text 2 plugin allowing users to run commands from Subl
 Typing `LBL: Choose Application` in the Command Palette allows the user to switch between Terminal and iTerm.
 
 In R scripts, if you highlight the first line of a function and hit `command-d`, a roxygen2-style documentation template will pop up above the function. This is thanks to Karthik Ram. I copied his code, from the wonderful [RTools](https://github.com/karthik/Rtools) plugin, directly into this package because RTools sends code to the R app (not the Terminal). 
+
+New and improved: now, by default, your cursor will move to the next line of code after you send a line of text to the Terminal. You can disable this behavior by changing the 'advance_cursor' setting (in `line-by-line.sublime-settings`) to `false`. 

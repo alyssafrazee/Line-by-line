@@ -112,18 +112,47 @@ class RDocsCommand(sublime_plugin.TextCommand):
         # params_reg = self.view.find('(?<=\().*(?=\)|$)', sel.begin())
         # self.view.insert(edit, sel.begin(), params_reg)
         params_txt = ''
-        for i in self.view.sel():
-            params_txt += ' ' + self.view.substr(i)
+        pp = self.view.substr(sel).split('\n')
+        for i in pp:
+            p = re.sub("#+", "#", i)
+            p1 = re.sub("([^#]+)#.*", "\\1", p)
+            p2 = re.sub("([^#]+)#(.*)", "# \\2", p)
+            if not re.search("#", p):
+                p2 = '';
+            p2 = re.sub("[^#]+[#|$]", "", p2)
+            p2 = re.sub(",", " ", p2)
+
+            p2 = re.sub("=", " ISEQUALTOVALUETHIS ", p2)
+            p1 = re.sub("(.*)=(.*)", "\\1", p1)
+            # p1 = re.sub("#.*", "", p)
+            # self.view.insert(edit, sel.begin(), p1)
+
+            p2=re.sub("\s+"," ",p2)
+            p2=re.sub("^\s+"," ",p2)
+            p2=re.sub("\s+\Z","",p2)
+            p1 = re.sub("(.*),", "\\1 ", p1)
+            # self.view.insert(edit, sel.begin(), p2)
+            # if p2 != '':
+            p = p1 + p2 + ","
+            # else :
+                # p = p1
+            # p = re.sub('(.*)#(.*)[,](.*)', "\\1#\\2 \\3", p)
+            params_txt += ' ' + p
+
+
         params_txt=re.sub(".*function\s*\(","",params_txt)
         params_txt=re.sub("^\s+","",params_txt)
         params_txt=re.sub("\s+\Z","",params_txt)
         params_txt=re.sub(',\s+', ",", params_txt)
         params_txt=re.sub('\s+=', "=", params_txt)
         params_txt=re.sub('=\s+', "=", params_txt)
+        params_txt=re.sub('\s+', " ", params_txt)
         params_txt=re.sub('"', "", params_txt)
         params_txt=re.sub(',$', "", params_txt)
         params_txt=re.sub('{$', "", params_txt)
         params_txt=re.sub('\)$', "", params_txt)
+        params_txt=re.sub('^,', "", params_txt)
+        params_txt=re.sub(',#', " #", params_txt)
 
         #### adding trailing , so they are the same
         params_txt = params_txt + ","
@@ -139,6 +168,7 @@ class RDocsCommand(sublime_plugin.TextCommand):
         params_txt=re.sub('\n', " ", params_txt)
         # self.view.insert(edit, sel.begin(), params_txt)
 
+
         # Splitting on commas
         params = params_txt.split(',')
         snippet = "#' @title <brief desc>\n#'\n#' @description <full description>\n"
@@ -148,10 +178,12 @@ class RDocsCommand(sublime_plugin.TextCommand):
 
             # Added if statement if not empty
             if p != '':
-                p = re.sub('(.*)=(.*)\s*#\s*(.*)', "\\1 \\3", p);
+                p = re.sub('(.*)=(.*)\s*,\s*#\s*(.*)', "\\1 \\3", p);
                 p = re.sub("^\s*","",p)
-                p = re.sub("#*","",p)
+                p = re.sub("#+"," ",p)
                 p = re.sub('(.*)=(.*)', "\\1", p);
+                p = re.sub("\s+"," ",p)
+                p = re.sub("ISEQUALTOVALUETHIS", "=", p)
                 snippet += "#' @param %s\n" % p
 
         snippet += "#' @export\n#' @keywords\n#' @seealso\n#' @return\n#' @alias\n#' @examples \dontrun{\n#'\n#'}\n"

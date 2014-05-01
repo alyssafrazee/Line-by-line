@@ -131,9 +131,13 @@ class RDocsCommand(sublime_plugin.TextCommand):
         ### take out anything like ifelse() or c()
         params_txt=re.sub('=[^=]+?\(\S+?\),', ",", params_txt)
         params_txt=re.sub('=[^=]+?\{\S+?\},', ",", params_txt)
-        params_txt=re.sub(',$', "", params_txt)
+        # params_txt=re.sub(',$', "", params_txt)
 
+        # params_txt=re.sub('#*(.*),*(.*)\n', "\\1;\\2", params_txt)
 
+        params_txt=re.sub('(.*), *[#]*(.*)', "\\1 #\\2,", params_txt)
+        params_txt=re.sub('\n', " ", params_txt)
+        # self.view.insert(edit, sel.begin(), params_txt)
 
         # Splitting on commas
         params = params_txt.split(',')
@@ -144,8 +148,11 @@ class RDocsCommand(sublime_plugin.TextCommand):
 
             # Added if statement if not empty
             if p != '':
-                p = re.sub('(.*)=(.*)', "\\1", p)
-                snippet += "#' @param %s <what param does>\n" % p
+                p = re.sub('(.*)=(.*)\s*#\s*(.*)', "\\1 \\3", p);
+                p = re.sub("^\s*","",p)
+                p = re.sub("#*","",p)
+                p = re.sub('(.*)=(.*)', "\\1", p);
+                snippet += "#' @param %s\n" % p
 
         snippet += "#' @export\n#' @keywords\n#' @seealso\n#' @return\n#' @alias\n#' @examples \dontrun{\n#'\n#'}\n"
 

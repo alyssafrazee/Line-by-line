@@ -106,11 +106,15 @@ class SendSelectCommand(sublime_plugin.TextCommand):
 
 class RDocsCommand(sublime_plugin.TextCommand):
     def run(self, edit):
+        # self.view.insert(edit, 1, self.view.sel()[0])
         sel = self.view.sel()[0]
         # Taking out spaces and such
-        params_reg = self.view.find('(?<=\().*(?=\)|$)', sel.begin())
+        # params_reg = self.view.find('(?<=\().*(?=\)|$)', sel.begin())
         # self.view.insert(edit, sel.begin(), params_reg)
-        params_txt = self.view.substr(params_reg)
+        params_txt = ''
+        for i in self.view.sel():
+            params_txt += ' ' + self.view.substr(i)
+        params_txt=re.sub(".*function\s*\(","",params_txt)
         params_txt=re.sub("^\s+","",params_txt)
         params_txt=re.sub("\s+\Z","",params_txt)
         params_txt=re.sub(',\s+', ",", params_txt)

@@ -186,7 +186,7 @@ class RDocsCommand(sublime_plugin.TextCommand):
                 p = re.sub("ISEQUALTOVALUETHIS", "=", p)
                 snippet += "#' @param %s\n" % p
 
-        snippet += "#' @export\n#' @keywords\n#' @seealso\n#' @return\n#' @alias\n#' @examples \dontrun{\n#'\n#'}\n"
+        snippet += "#' @export\n#' @keywords\n#' @seealso\n#' @return\n#' @aliases\n#' @examples \dontrun{\n#'\n#'}\n"
 
         self.view.insert(edit, sel.begin(), snippet)
 

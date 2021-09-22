@@ -44,7 +44,7 @@ def runcmd(cmd):
         elif re.match('iTerm', App):
                 args = ['osascript']
                 apple_script = ('tell application "' + App + '"\n'
-                                    'tell the first terminal\n'
+                                    'tell current terminal\n'
                                         'tell current session\n'
                                             'write text "' + cmd + '"\n'
                                         'end tell\n'
